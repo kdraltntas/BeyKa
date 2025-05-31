@@ -1,0 +1,6 @@
+tamsayı i = 0;
+
+döngü (i < 5) {
+    yaz(i);
+    i = i + 1;
+}

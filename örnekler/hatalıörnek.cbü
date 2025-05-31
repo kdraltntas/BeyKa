@@ -1,0 +1,6 @@
+tamsayı x = 10;
+ondalikli y = 2.5;
+kelime mesaj = "Merhaba"
+x = x + 5;
+yaz(x);
+yaz(mesaj);

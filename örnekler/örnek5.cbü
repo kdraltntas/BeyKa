@@ -1,0 +1,6 @@
+fonksiyon karesi(x) {
+  dön (x * x);
+}
+tamsayı y = karesi(5);
+yaz(y);
+// yaz(y);

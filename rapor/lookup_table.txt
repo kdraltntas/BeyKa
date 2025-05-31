@@ -1,0 +1,22 @@
+CBÜ DİLİ ANAHTAR KELİME VE KARAKTER TABLOSU
+
+A. ANAHTAR KELİMELER (KEYWORDS)
+--------------------------------
+| Anahtar Kelime | Açıklama                |
+|----------------|-------------------------|
+| değişken       | Değişken tanımlamak     |
+| eğer           | Koşullu ifade (if)      |
+| ise            | if bloğu başlangıcı     |
+| iken           | Döngü başlatmak (while) |
+| yaz            | Ekrana çıktı vermek     |
+
+B. DESTEKLENEN KARAKTERLER
+--------------------------
+Küçük Harfler:
+a b c ç d e f g ğ h ı i j k l m n o ö p r s ş t u ü v y z
+
+Büyük Harfler:
+A B C Ç D E F G Ğ H I İ J K L M N O Ö P R S Ş T U Ü V Y Z
+
+Rakamlar:
+0 1 2 3 4 5 6 7 8 9

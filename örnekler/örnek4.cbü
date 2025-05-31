@@ -1,0 +1,5 @@
+tamsayı i = 0;
+döngü (i < 3) {
+    yaz("Tekrar");
+    i = i + 1;
+}

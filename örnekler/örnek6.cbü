@@ -1,0 +1,2 @@
+kelime kupon = oku("dosya okuma/deneme.txt");
+yaz(kupon);
