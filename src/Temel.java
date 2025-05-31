@@ -1,24 +1,39 @@
 import java.io.*;
 import java.util.*;
 
+/**
+ * Temel.java
+ *
+ * CBU programlama dili için ana çalıştırıcı sınıf.
+ * Derlenen kaynak dosyasını (örnek: ornek1.cbü) tokenize eder,
+ * token listesini ve analiz sonuçlarını log dosyalarına yazar,
+ * ardından programı çalıştırır ve çıktı ile hataları kaydeder.
+ *
+ * Çalıştırma: java Temel <ornekler/ornek1.cbü>
+ */
 public class Temel {
     public static void main(String[] args) {
+        // === Komut satırı argüman kontrolü ===
         if (args.length != 1) {
             System.out.println("Kullanım: java Temel <ornekler/ornek1.cbü>");
             return;
         }
 
+        // === Log klasörü hazırlığı ===
         File logDir = new File("logs");
         if (!logDir.exists()) logDir.mkdirs();
 
+        // Token listesini tutacak
         List<CBULexer.TokenInfo> tokenList = new ArrayList<>();
 
+        // === 1. Tokenizasyon: Kaynak dosyadan tokenları çıkar ve logla ===
         try (CBULexer lexer = new CBULexer(args[0]);
              PrintWriter tokenWriter = new PrintWriter(new File(logDir, "tokens.txt"))) {
 
             CBULexer.TokenInfo token;
             while ((token = lexer.nextToken()) != null) {
                 tokenList.add(token);
+                // Token bilgisini dosyaya yaz
                 tokenWriter.printf("Token: %d\tLexeme: %s [satır %d, sütun %d]%n",
                         token.token, token.lexeme, token.line, token.column);
             }
@@ -28,6 +43,7 @@ public class Temel {
             return;
         }
 
+        // Token listesini ekrana yazdır
         System.out.println("=== TOKEN LİSTESİ ===");
         for (CBULexer.TokenInfo t : tokenList) {
             System.out.printf("Token: %d\tLexeme: %s [satır %d, sütun %d]%n",
@@ -36,12 +52,16 @@ public class Temel {
 
         System.out.println("\n=== PARSER BAŞLIYOR ===");
 
+        // Çıktıyı hem ekrana hem dosyaya kaydetmek için stream ayarları
         PrintStream originalOut = System.out;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream tempOut = new PrintStream(baos);
 
         try {
-            // Tee Output: Hem terminale hem dosya için OutputStream
+            /**
+             * Tee OutputStream:
+             * Terminale ve logs/output.txt'ye eşzamanlı çıktı gönderir.
+             */
             PrintStream tee = new PrintStream(new OutputStream() {
                 @Override
                 public void write(int b) throws IOException {
@@ -51,9 +71,11 @@ public class Temel {
             }, true);
 
             System.setOut(tee);
+            // Parser'ı başlat ve programı çalıştır
             new CBUParser(tokenList).parseProgram();
 
         } catch (RuntimeException e) {
+            // Beklenmedik hata olursa eski çıktı sistemine dön ve hatayı logla
             System.setOut(originalOut);
             try (PrintWriter errLog = new PrintWriter(new File(logDir, "errors.txt"))) {
                 errLog.println(e.getMessage());
@@ -64,8 +86,10 @@ public class Temel {
             }
         }
 
+        // Çıktıyı tekrar terminale döndür
         System.setOut(originalOut);
 
+        // Program çıktısını dosyaya kaydet
         try (PrintWriter outLog = new PrintWriter(new File(logDir, "output.txt"))) {
             outLog.write(baos.toString());
         } catch (IOException e) {
