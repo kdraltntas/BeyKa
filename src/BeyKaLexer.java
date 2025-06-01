@@ -2,13 +2,13 @@ import java.io.*;
 import java.util.*;
 
 /**
- * CBULexer.java
+ * BeyKaLexer.java
  *
- * CBU programlama dili için temel Lexical Analyzer (tokenizer) sınıfıdır.
+ * BeyKa programlama dili için temel Lexical Analyzer (tokenizer) sınıfıdır.
  * Girilen kaynak dosyadan tokenları çıkarır, satır ve sütun bilgisi ile birlikte döndürür.
  * Türkçe karakter desteği ve satır içi yorum satırı (//) algılaması mevcuttur.
  */
-public class CBULexer implements AutoCloseable {
+public class BeyKaLexer implements AutoCloseable {
 
     // Okuma işlemleri için reader ve satır kontrolü
     private BufferedReader reader;
@@ -23,9 +23,9 @@ public class CBULexer implements AutoCloseable {
     ));
 
     /**
-     * CBULexer oluşturucu. Dosya yolunu alır ve dosyayı okumaya hazırlar.
+     * BeyKaLexer oluşturucu. Dosya yolunu alır ve dosyayı okumaya hazırlar.
      */
-    public CBULexer(String filename) throws IOException {
+    public BeyKaLexer(String filename) throws IOException {
         reader = new BufferedReader(new FileReader(filename));
         line = "";
         pos = 0;

@@ -3,18 +3,18 @@ import java.util.*;
 import java.nio.file.*;
 
 /**
- * CBUParser.java
+ * BeyKaParser.java
  *
- * CBU Türkçe programlama dili için recursive descent parser ve interpreter.
+ * BeyKa Türkçe programlama dili için recursive descent parser ve interpreter.
  * Fonksiyon tanımlama/çağırma, değişken işlemleri, koşullu ifadeler, döngüler ve temel tip kontrolü içerir.
- * Token listesini (CBULexer.TokenInfo) alır ve programı yorumlayarak çıktıyı üretir.
+ * Token listesini (BeyKaLexer.TokenInfo) alır ve programı yorumlayarak çıktıyı üretir.
  */
-public class CBUParser {
+public class BeyKaParser {
     /** Kullanıcı tanımlı fonksiyonları tutan iç sınıf. */
     private static class Function {
         List<String> parametreler;
-        List<CBULexer.TokenInfo> govde;
-        Function(List<String> parametreler, List<CBULexer.TokenInfo> govde) {
+        List<BeyKaLexer.TokenInfo> govde;
+        Function(List<String> parametreler, List<BeyKaLexer.TokenInfo> govde) {
             this.parametreler = parametreler;
             this.govde = govde;
         }
@@ -26,7 +26,7 @@ public class CBUParser {
         ReturnValue(Object value) { this.value = value; }
     }
 
-    private final List<CBULexer.TokenInfo> tokens; // Token akışı
+    private final List<BeyKaLexer.TokenInfo> tokens; // Token akışı
     private int pos = 0; // Şu anki token pozisyonu
     private final List<String> errors = new ArrayList<>(); // Toplanan hata mesajları
 
@@ -42,7 +42,7 @@ public class CBUParser {
     /**
      * Token listesinden parser nesnesi oluşturur.
      */
-    public CBUParser(List<CBULexer.TokenInfo> tokens) {
+    public BeyKaParser(List<BeyKaLexer.TokenInfo> tokens) {
         this.tokens = tokens;
     }
 
@@ -53,7 +53,7 @@ public class CBUParser {
     public void ilkPassFonksiyonlariKaydet() {
         int tmpPos = 0;
         while (tmpPos < tokens.size()) {
-            CBULexer.TokenInfo cur = tokens.get(tmpPos);
+            BeyKaLexer.TokenInfo cur = tokens.get(tmpPos);
             if (cur.token == Token.FONKSIYON) {
                 int fnPos = tmpPos;
                 tmpPos++; // fonksiyon adı
@@ -115,7 +115,7 @@ public class CBUParser {
      * Bir komutu parse eder: değişken tanımı, atama, yazdırma, koşul, döngü, fonksiyon çağrısı, vs.
      */
     private void parseKomut() {
-        CBULexer.TokenInfo cur = peek();
+        BeyKaLexer.TokenInfo cur = peek();
         if (cur == null) return;
         switch (cur.token) {
             case Token.FONKSIYON:
@@ -173,7 +173,7 @@ public class CBUParser {
         else if (tipToken == Token.KELIME) veriTipi = Type.KELIME;
 
         advance();
-        CBULexer.TokenInfo name = peek();
+        BeyKaLexer.TokenInfo name = peek();
         if (!match(Token.DEGISKEN)) {
             error("Geçerli değişken ismi bekleniyor.");
             return;
@@ -202,7 +202,7 @@ public class CBUParser {
 
     /** Değişken atamalarını işler. (a = 3 + 2; gibi) */
     private void parseAtama() {
-        CBULexer.TokenInfo varTok = peek();
+        BeyKaLexer.TokenInfo varTok = peek();
         if (!symbolTable.containsKey(varTok.lexeme)) {
             errors.add("Tanımsız değişken: " + varTok.lexeme);
             expect(Token.DEGISKEN);
@@ -336,7 +336,7 @@ public class CBUParser {
     /** Tek bir koşul ifadesini (a == b vb) parse eder. */
     private boolean evaluateKosul() {
         Object l = evaluateIfade();
-        CBULexer.TokenInfo t = peek();
+        BeyKaLexer.TokenInfo t = peek();
         if (t == null) {
             error("Koşul bekleniyor, ama token yok.");
             return false;
@@ -363,7 +363,7 @@ public class CBUParser {
      * Not: Burada işlem önceliği desteği için daha gelişmiş ayrıştırıcı gerekir.
      */
     private Object evaluateIfade() {
-        CBULexer.TokenInfo t = peek();
+        BeyKaLexer.TokenInfo t = peek();
         Object res;
 
         // (ifade) desteği eklendi
@@ -429,7 +429,7 @@ public class CBUParser {
 
     /** Yerleşik fonksiyon çağrılarını işler (uzunluk, karesi, tarih, oku). */
     private Object evaluateYerlesikFonksiyon() {
-        CBULexer.TokenInfo fn = peek(); advance();
+        BeyKaLexer.TokenInfo fn = peek(); advance();
         expect(Token.PARANTEZ_AC);
         Object arg = check(Token.PARANTEZ_KAPA) ? null : evaluateIfade();
         expect(Token.PARANTEZ_KAPA);
@@ -455,7 +455,7 @@ public class CBUParser {
 
     /** Kullanıcı tanımlı fonksiyon çağrısını işler. */
     private Object evaluateFonksiyonCagri() {
-        CBULexer.TokenInfo fn = peek(); advance();
+        BeyKaLexer.TokenInfo fn = peek(); advance();
         expect(Token.PARANTEZ_AC);
         List<Object> args = new ArrayList<>();
         if (!check(Token.PARANTEZ_KAPA)) {
@@ -473,7 +473,7 @@ public class CBUParser {
         for (int i = 0; i < args.size(); i++) {
             memory.put(f.parametreler.get(i), args.get(i));
         }
-        CBUParser sub = new CBUParser(f.govde);
+        BeyKaParser sub = new BeyKaParser(f.govde);
         sub.symbolTable.putAll(symbolTable);
         sub.memory.putAll(memory);
         sub.fonksiyonTablosu.putAll(fonksiyonTablosu);
@@ -504,10 +504,10 @@ public class CBUParser {
     }
 
     /** Token'ı ileri sarma ve yardımcı fonksiyonlar */
-    private CBULexer.TokenInfo peek() {
+    private BeyKaLexer.TokenInfo peek() {
         return isAtEnd() ? null : tokens.get(pos);
     }
-    private CBULexer.TokenInfo advance() {
+    private BeyKaLexer.TokenInfo advance() {
         return tokens.get(pos++);
     }
     private boolean match(int exp) {
@@ -522,7 +522,7 @@ public class CBUParser {
     }
     private void expect(int exp) {
         if (!match(exp)) {
-            CBULexer.TokenInfo t = peek();
+            BeyKaLexer.TokenInfo t = peek();
             String loc = (t != null) ? " [" + t.line + "," + t.column + "]" : "";
             errors.add("Beklenen " + exp + ", gelen: "
                     + (t != null ? t.token + "(" + t.lexeme + ")" : "EOF")
@@ -530,7 +530,7 @@ public class CBUParser {
         }
     }
     private void error(String msg) {
-        CBULexer.TokenInfo t = peek();
+        BeyKaLexer.TokenInfo t = peek();
         String loc = (t != null) ? " [" + t.line + "," + t.column + "]" : "";
         errors.add(msg + loc);
     }

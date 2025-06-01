@@ -1,5 +1,5 @@
 /**
- * Token sınıfı: CBU dilinin lexer ve parser'ında kullanılan bütün token türlerinin sabit değerlerini içerir.
+ * Token sınıfı: BeyKa dilinin lexer ve parser'ında kullanılan bütün token türlerinin sabit değerlerini içerir.
  * Her token bir tamsayı ile temsil edilir. Bu sabitler, kaynak kodun analizinde kullanılır.
  */
 public class Token {

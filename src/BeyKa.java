@@ -2,20 +2,20 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Temel.java
+ * BeyKa.java
  *
- * CBU programlama dili için ana çalıştırıcı sınıf.
- * Derlenen kaynak dosyasını (örnek: ornek1.cbü) tokenize eder,
+ * BeyKa programlama dili için ana çalıştırıcı sınıf.
+ * Derlenen kaynak dosyasını (örnek: ornek1.bka) tokenize eder,
  * token listesini ve analiz sonuçlarını log dosyalarına yazar,
  * ardından programı çalıştırır ve çıktı ile hataları kaydeder.
  *
- * Çalıştırma: java Temel <ornekler/ornek1.cbü>
+ * Çalıştırma: java BeyKa <ornekler/ornek1.bka>
  */
-public class Temel {
+public class BeyKa {
     public static void main(String[] args) {
         // === Komut satırı argüman kontrolü ===
         if (args.length != 1) {
-            System.out.println("Kullanım: java Temel <ornekler/ornek1.cbü>");
+            System.out.println("Kullanım: java BeyKa <ornekler/ornek1.bka>");
             return;
         }
 
@@ -24,13 +24,13 @@ public class Temel {
         if (!logDir.exists()) logDir.mkdirs();
 
         // Token listesini tutacak
-        List<CBULexer.TokenInfo> tokenList = new ArrayList<>();
+        List<BeyKaLexer.TokenInfo> tokenList = new ArrayList<>();
 
         // === 1. Tokenizasyon: Kaynak dosyadan tokenları çıkar ve logla ===
-        try (CBULexer lexer = new CBULexer(args[0]);
+        try (BeyKaLexer lexer = new BeyKaLexer(args[0]);
              PrintWriter tokenWriter = new PrintWriter(new File(logDir, "tokens.txt"))) {
 
-            CBULexer.TokenInfo token;
+            BeyKaLexer.TokenInfo token;
             while ((token = lexer.nextToken()) != null) {
                 tokenList.add(token);
                 // Token bilgisini dosyaya yaz
@@ -45,12 +45,12 @@ public class Temel {
 
         // Token listesini ekrana yazdır
         System.out.println("=== TOKEN LİSTESİ ===");
-        for (CBULexer.TokenInfo t : tokenList) {
+        for (BeyKaLexer.TokenInfo t : tokenList) {
             System.out.printf("Token: %d\tLexeme: %s [satır %d, sütun %d]%n",
                     t.token, t.lexeme, t.line, t.column);
         }
 
-        System.out.println("\n=== PARSER BAŞLIYOR ===");
+        System.out.println("\n=== BEYKA PARSER BAŞLIYOR ===");
 
         // Çıktıyı hem ekrana hem dosyaya kaydetmek için stream ayarları
         PrintStream originalOut = System.out;
@@ -72,7 +72,7 @@ public class Temel {
 
             System.setOut(tee);
             // Parser'ı başlat ve programı çalıştır
-            new CBUParser(tokenList).parseProgram();
+            new BeyKaParser(tokenList).parseProgram();
 
         } catch (RuntimeException e) {
             // Beklenmedik hata olursa eski çıktı sistemine dön ve hatayı logla
@@ -96,6 +96,6 @@ public class Temel {
             System.err.println("Çıktı dosyasına yazılamadı: " + e.getMessage());
         }
 
-        System.out.println("Program çalıştırıldı. Çıktılar 'logs/' klasörüne kaydedildi.");
+        System.out.println("BeyKa programı çalıştırıldı. Çıktılar 'logs/' klasörüne kaydedildi.");
     }
 }
