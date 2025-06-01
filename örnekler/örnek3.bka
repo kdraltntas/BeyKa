@@ -1,0 +1,4 @@
+// ornek3.beyka
+tamsayı x = "metin";
+yaz(x);
+

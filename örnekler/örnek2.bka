@@ -1,0 +1,18 @@
+// ornek2.beyka
+fonksiyon faktoriyel(n) {
+    tamsayı sonuc = 1;
+    döngü (n > 1) {
+        sonuc = sonuc * n;
+        n = n - 1;
+    }
+    dön sonuc;
+}
+
+tamsayı a = 5;
+tamsayı f = faktoriyel(a);
+yaz("5 faktöriyel: ");
+yaz(f);
+
+eğer (f == 120) ise {
+    yaz("Doğru hesaplandı!");
+}

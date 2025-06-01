@@ -1,6 +1,0 @@
-tamsayı x = 10;
-ondalikli y = 2.5;
-kelime mesaj = "Çiğ köfte ayran ben sana hayran";
-x = x + 5;
-yaz(x);
-yaz(mesaj);

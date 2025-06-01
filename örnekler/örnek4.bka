@@ -1,0 +1,4 @@
+// ornek4.beyka
+ondalikli a = 4.2;
+b = a + 1
+yaz(b);

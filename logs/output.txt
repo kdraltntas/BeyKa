@@ -1,2 +1,2 @@
-55
-Program geçerli.
+0
+Programda 2 hata bulundu:

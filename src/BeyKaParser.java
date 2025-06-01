@@ -6,7 +6,7 @@ import java.nio.file.*;
  * BeyKaParser.java
  *
  * BeyKa Türkçe programlama dili için recursive descent parser ve interpreter.
- * Fonksiyon tanımlama/çağırma, değişken işlemleri, koşullu ifadeler, döngüler ve temel tip kontrolü içerir.
+ * Fonksiyon tanımlama/çağırma, değişken işlemleri, koşullu ifadeler, döngüler ve tip kontrolü içerir.
  * Token listesini (BeyKaLexer.TokenInfo) alır ve programı yorumlayarak çıktıyı üretir.
  */
 public class BeyKaParser {
@@ -55,7 +55,6 @@ public class BeyKaParser {
         while (tmpPos < tokens.size()) {
             BeyKaLexer.TokenInfo cur = tokens.get(tmpPos);
             if (cur.token == Token.FONKSIYON) {
-                int fnPos = tmpPos;
                 tmpPos++; // fonksiyon adı
                 String fname = tokens.get(tmpPos).lexeme;
                 tmpPos++; // (
@@ -111,9 +110,7 @@ public class BeyKaParser {
         }
     }
 
-    /**
-     * Bir komutu parse eder: değişken tanımı, atama, yazdırma, koşul, döngü, fonksiyon çağrısı, vs.
-     */
+    /** Komutları parse eder: değişken tanımı, atama, yazdırma, koşul, döngü, fonksiyon çağrısı, vs. */
     private void parseKomut() {
         BeyKaLexer.TokenInfo cur = peek();
         if (cur == null) return;
@@ -147,7 +144,7 @@ public class BeyKaParser {
         }
     }
 
-    /** Fonksiyon tanımını (çalışma sırasında) atlar, fonksiyonlar ilk geçişte zaten kaydedilir. */
+    /** Fonksiyon tanımını (çalışma sırasında) atlar, fonksiyonlar ilk geçişte kaydedilir. */
     private void skipFonksiyonTanimi() {
         advance(); // fonksiyon
         advance(); // ad
@@ -165,7 +162,7 @@ public class BeyKaParser {
         }
     }
 
-    /** Değişken tanımlarını parse eder. (tamsayı a = 5; gibi) */
+    /** Değişken tanımlarını parse eder. (ör. tamsayı a = 5;) */
     private void parseDegiskenTanimla(int tipToken) {
         Type veriTipi = null;
         if (tipToken == Token.TAMSAYI) veriTipi = Type.TAMSAYI;
@@ -200,7 +197,7 @@ public class BeyKaParser {
         expect(Token.NOKTALI_VIRGUL);
     }
 
-    /** Değişken atamalarını işler. (a = 3 + 2; gibi) */
+    /** Değişken atamalarını işler. (ör. a = 3 + 2;) */
     private void parseAtama() {
         BeyKaLexer.TokenInfo varTok = peek();
         if (!symbolTable.containsKey(varTok.lexeme)) {
@@ -360,7 +357,7 @@ public class BeyKaParser {
 
     /**
      * Matematiksel ifadeleri parse ve evaluate eder. (Örn: 2 + 3 * 5)
-     * Not: Burada işlem önceliği desteği için daha gelişmiş ayrıştırıcı gerekir.
+     * Not: İşlem önceliği desteği için burada recursive olarak ayrıştırılır.
      */
     private Object evaluateIfade() {
         BeyKaLexer.TokenInfo t = peek();
@@ -391,7 +388,7 @@ public class BeyKaParser {
             res = t.lexeme;
         }
         else if (check(Token.DEGISKEN)) {
-            // Eğer bir sonraki token PARANTEZ_AC ise fonksiyon çağrısıdır!
+            // Fonksiyon çağrısı mı? (ismini parametre listesi takip ediyor mu?)
             if (pos+1 < tokens.size() && tokens.get(pos+1).token == Token.PARANTEZ_AC) {
                 if (fonksiyonTablosu.containsKey(t.lexeme)) return evaluateFonksiyonCagri();
                 return evaluateYerlesikFonksiyon();
@@ -469,22 +466,25 @@ public class BeyKaParser {
             errors.add("Fonksiyon hatası/argüman sayısı: " + fn.lexeme);
             return 0;
         }
-        Map<String,Object> backup = new HashMap<>(memory);
-        for (int i = 0; i < args.size(); i++) {
-            memory.put(f.parametreler.get(i), args.get(i));
-        }
+
+        // --- FONKSİYON LOKALİTESİ BURADA ---
+        // Her çağrıda YENİ bir parser, lokal symbolTable ve memory:
         BeyKaParser sub = new BeyKaParser(f.govde);
-        sub.symbolTable.putAll(symbolTable);
-        sub.memory.putAll(memory);
+
+        // Parametre isimlerini tip olarak KELIME kabul edelim (veya ek tip aktarabilirsin).
+        for (int i = 0; i < f.parametreler.size(); i++) {
+            sub.symbolTable.put(f.parametreler.get(i), Type.TAMSAYI); // Genellikle tamsayı bekleniyor, gerekirse geliştir.
+            sub.memory.put(f.parametreler.get(i), args.get(i));
+        }
+        // Fonksiyonun tanımlarını aktar (recursive fonksiyonlar için):
         sub.fonksiyonTablosu.putAll(fonksiyonTablosu);
+
         try {
             sub.parseProgram();
         } catch (ReturnValue r) {
-            memory.putAll(sub.memory);
             errors.addAll(sub.errors);
             return r.value;
         }
-        memory.putAll(sub.memory);
         errors.addAll(sub.errors);
         return 0;
     }
@@ -503,7 +503,7 @@ public class BeyKaParser {
         return false;
     }
 
-    /** Token'ı ileri sarma ve yardımcı fonksiyonlar */
+    // --- Yardımcı fonksiyonlar ---
     private BeyKaLexer.TokenInfo peek() {
         return isAtEnd() ? null : tokens.get(pos);
     }

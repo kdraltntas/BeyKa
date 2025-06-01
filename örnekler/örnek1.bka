@@ -1,0 +1,7 @@
+// örnek1.beyka
+tamsayı x = 5 + 3 * 2;
+ondalikli y = 2.5 + x / 2;
+kelime s = "BeyKa dilini kullandığınız için teşekkürler <3";
+yaz(x);
+yaz(y);
+yaz(s);
