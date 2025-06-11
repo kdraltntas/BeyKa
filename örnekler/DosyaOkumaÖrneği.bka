@@ -1,0 +1,2 @@
+kelime a = oku("dosya okuma/deneme.txt");
+yaz(a);
