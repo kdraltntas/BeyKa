@@ -1,2 +1,4 @@
-0
-Programda 2 hata bulundu:
+kelime x = "Dr. Lectrer Didem Abidin";
+yaz (x);
+
+Program geçerli.

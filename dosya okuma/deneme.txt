@@ -1,1 +1,2 @@
-Dr. Lectrer Didem Abidin
+kelime x = "Dr. Lectrer Didem Abidin";
+yaz (x);
