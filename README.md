@@ -76,6 +76,7 @@ git clone https://github.com/kdraltntas/BeyKa.git
 
 Derleyin:
 javac *.java
+
 Örnek Bir Kod Çalıştırın: Kendi .bka uzantılı dosyanızı oluşturun veya örnekleri kullanın.
 
 java BeyKa ornekler/test.bka
