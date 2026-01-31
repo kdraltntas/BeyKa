@@ -1,4 +1,2 @@
-kelime x = "Dr. Lectrer Didem Abidin";
-yaz (x);
-
-Program geçerli.
+0
+Programda 2 hata bulundu:
